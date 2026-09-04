@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Tester & Explorer | Ecwid Next.js Commerce Style</title>
+
+    <!-- Modern Typography (Inter & JetBrains Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* -------------------------------------------------------------
+       Design Tokens - Ecwid / Next.js Commerce Aesthetic
+       Monochrome, High Contrast, Crisp Borders, Precise Typography
+    ------------------------------------------------------------- */
+      :root[data-theme="dark"] {
+        --bg-canvas: #000000;
+        --bg-surface: #0a0a0a;
+        --bg-subtle: #141414;
+        --bg-hover: #1f1f1f;
+        --border-color: #27272a;
+        --border-subtle: #1f1f23;
+
+        --text-main: #f4f4f5;
+        --text-muted: #a1a1aa;
+        --text-dim: #71717a;
+
+        --accent-primary: #ffffff;
+        --accent-primary-text: #000000;
+
+        --code-bg: #09090b;
+        --scrollbar-thumb: #27272a;
+      }
+
+      :root[data-theme="light"] {
+        --bg-canvas: #fafafa;
+        --bg-surface: #ffffff;
+        --bg-subtle: #f4f4f5;
+        --bg-hover: #e4e4e7;
+        --border-color: #e4e4e7;
+        --border-subtle: #f4f4f5;
+
+        --text-main: #09090b;
+        --text-muted: #71717a;
+        --text-dim: #a1a1aa;
+
+        --accent-primary: #09090b;
+        --accent-primary-text: #ffffff;
+
+        --code-bg: #f8fafc;
+        --scrollbar-thumb: #d4d4d8;
+      }
+
+      /* Postman / Method Badges */
+      --color-get: #10b981;
+      --color-post: #3b82f6;
+      --color-put: #f59e0b;
+      --color-delete: #ef4444;
+      --color-patch: #8b5cf6;
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background-color: var(--bg-canvas);
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease;
+      }
+
+      /* Scrollbars */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: 9999px;
+      }
+
+      /* -------------------------------------------------------------
+       Header & Navbar
+    ------------------------------------------------------------- */
+      header {
+        height: 60px;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--bg-surface);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.5rem;
+        flex-shrink: 0;
+        z-index: 10;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .brand-logo {
+        width: 28px;
+        height: 28px;
+        background: var(--accent-primary);
+        color: var(--accent-primary-text);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.875rem;
+        letter-spacing: -0.05em;
+      }
+
+      .brand-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--text-main);
+      }
+
+      .brand-pill {
+        font-size: 0.68rem;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        background: var(--bg-subtle);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .base-url-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-subtle);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.25rem 0.65rem;
+        font-size: 0.75rem;
+      }
+
+      .base-url-label {
+        color: var(--text-dim);
+        font-weight: 500;
+      }
+
+      .base-url-input {
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        outline: none;
+        width: 170px;
+      }
+
+      .btn-icon {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        border-radius: 8px;
+        padding: 0.45rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+      }
+
+      .btn-icon:hover {
+        background: var(--bg-subtle);
+        color: var(--text-main);
+        border-color: var(--text-muted);
+      }
+
+      /* -------------------------------------------------------------
+       App Layout
+    ------------------------------------------------------------- */
+      .app-layout {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+      }
+
+      /* Sidebar Collections */
+      aside.sidebar {
+        width: 280px;
+        background: var(--bg-surface);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        user-select: none;
+      }
+
+      .sidebar-section {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .sidebar-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-dim);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
+
+      .endpoint-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .endpoint-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.5rem 0.65rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: background 0.15s ease;
+        color: var(--text-muted);
+        border: 1px solid transparent;
+      }
+
+      .endpoint-item:hover {
+        background: var(--bg-subtle);
+        color: var(--text-main);
+      }
+
+      .endpoint-item.active {
+        background: var(--bg-subtle);
+        border-color: var(--border-color);
+        color: var(--text-main);
+        font-weight: 500;
+      }
+
+      .method-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 1px 5px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      .method-get {
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.12);
+      }
+      .method-post {
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.12);
+      }
+      .method-put {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.12);
+      }
+      .method-delete {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.12);
+      }
+
+      .endpoint-path {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+      }
+
+      /* History section */
+      .history-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0.75rem;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      /* -------------------------------------------------------------
+       Main Stage
+    ------------------------------------------------------------- */
+      main.main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-canvas);
+        overflow-y: auto;
+        padding: 1.5rem;
+        gap: 1.25rem;
+      }
+
+      /* Request Bar */
+      .request-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 0.35rem 0.5rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      .select-method {
+        background: var(--bg-subtle);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.55rem 0.85rem;
+        border-radius: 6px;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .input-url {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.9rem;
+        color: var(--text-main);
+        padding: 0.5rem 0.75rem;
+      }
+
+      .btn-send {
+        background: var(--accent-primary);
+        color: var(--accent-primary-text);
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: none;
+        border-radius: 8px;
+        padding: 0.65rem 1.4rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+      }
+
+      .btn-send:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .btn-send:active {
+        transform: translateY(0);
+      }
+
+      .kbd-shortcut {
+        font-size: 0.65rem;
+        padding: 2px 5px;
+        border-radius: 4px;
+        background: rgba(128, 128, 128, 0.25);
+        font-weight: 500;
+      }
+
+      /* -------------------------------------------------------------
+       Request & Response Split Container
+    ------------------------------------------------------------- */
+      .panels-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        flex: 1;
+        min-height: 450px;
+      }
+
+      @media (max-width: 1024px) {
+        .panels-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .panel-header {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg-subtle);
+      }
+
+      .tabs-nav {
+        display: flex;
+        gap: 0.25rem;
+      }
+
+      .tab-btn {
+        background: transparent;
+        border: none;
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.15s ease;
+      }
+
+      .tab-btn:hover {
+        color: var(--text-main);
+        background: var(--bg-hover);
+      }
+
+      .tab-btn.active {
+        background: var(--bg-surface);
+        color: var(--text-main);
+        font-weight: 600;
+        border: 1px solid var(--border-color);
+      }
+
+      .panel-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Tab content panes */
+      .tab-pane {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .tab-pane.active {
+        display: flex;
+      }
+
+      /* JSON Editor / Code Area */
+      .code-editor {
+        width: 100%;
+        height: 100%;
+        min-height: 280px;
+        background: var(--code-bg);
+        color: var(--text-main);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.82rem;
+        padding: 1rem;
+        border: none;
+        outline: none;
+        resize: none;
+        line-height: 1.5;
+      }
+
+      /* Quick helper bar in body */
+      .editor-toolbar {
+        padding: 0.5rem 1rem;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg-surface);
+        font-size: 0.75rem;
+      }
+
+      .btn-secondary {
+        background: var(--bg-subtle);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        padding: 0.35rem 0.65rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.15s ease;
+      }
+
+      .btn-secondary:hover {
+        background: var(--bg-hover);
+        border-color: var(--text-muted);
+      }
+
+      /* Key-Value Table */
+      .kv-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+      }
+
+      .kv-table th {
+        text-align: left;
+        padding: 0.6rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-dim);
+        font-weight: 500;
+      }
+
+      .kv-table td {
+        padding: 0.4rem 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .kv-input {
+        width: 100%;
+        background: transparent;
+        border: 1px solid transparent;
+        padding: 0.35rem 0.5rem;
+        color: var(--text-main);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        border-radius: 4px;
+        outline: none;
+      }
+
+      .kv-input:focus {
+        background: var(--bg-subtle);
+        border-color: var(--border-color);
+      }
+
+      /* -------------------------------------------------------------
+       Response Panel Highlights
+    ------------------------------------------------------------- */
+      .response-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.75rem;
+      }
+
+      .status-pill {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 0.75rem;
+        padding: 3px 8px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .status-2xx {
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      .status-4xx,
+      .status-5xx {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+
+      .meta-item {
+        color: var(--text-dim);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .meta-val {
+        color: var(--text-muted);
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 600;
+      }
+
+      .response-output {
+        width: 100%;
+        height: 100%;
+        min-height: 280px;
+        background: var(--code-bg);
+        padding: 1rem;
+        overflow: auto;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.82rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+
+      /* Syntax Highlighting for Response */
+      .json-key {
+        color: #38bdf8;
+      }
+      .json-string {
+        color: #34d399;
+      }
+      .json-number {
+        color: #f59e0b;
+      }
+      .json-boolean {
+        color: #c084fc;
+      }
+      .json-null {
+        color: #94a3b8;
+      }
+
+      /* Empty state */
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: var(--text-dim);
+        gap: 0.75rem;
+        padding: 3rem 1rem;
+        text-align: center;
+      }
+
+      .empty-icon {
+        width: 48px;
+        height: 48px;
+        opacity: 0.4;
+      }
+
+      .empty-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .empty-desc {
+        font-size: 0.75rem;
+        max-width: 250px;
+        line-height: 1.4;
+      }
+
+      /* Spinner */
+      .spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        display: none;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Navbar -->
+    <header>
+      <div class="brand">
+        <div>
+          <span class="brand-title">Postman Lite</span>
+          <span class="brand-pill">Spring Boot API</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="base-url-wrapper">
+          <span class="base-url-label">Host:</span>
+          <input
+            id="baseUrlInput"
+            class="base-url-input"
+            type="text"
+            value="http://localhost:8080"
+          />
+        </div>
+
+        <button
+          id="themeToggleBtn"
+          class="btn-icon"
+          title="Toggle Dark/Light Mode"
+        >
+          <svg
+            id="themeIcon"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="app-layout">
+      <!-- Sidebar: Built-in Collections & Quick Endpoints -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-title">Controller Endpoints</div>
+          <ul class="endpoint-list">
+            <li class="endpoint-item active" onclick="loadPreset('ping')">
+              <span class="method-tag method-get">GET</span>
+              <span class="endpoint-path">/api/produk</span>
+            </li>
+            <li class="endpoint-item" onclick="loadPreset('get_by_id')">
+              <span class="method-tag method-get">GET</span>
+              <span class="endpoint-path">/api/produk/1</span>
+            </li>
+            <li class="endpoint-item" onclick="loadPreset('get_not_found')">
+              <span class="method-tag method-get">GET</span>
+              <span class="endpoint-path">/api/produk/99</span>
+            </li>
+            <li class="endpoint-item" onclick="loadPreset('create')">
+              <span class="method-tag method-post">POST</span>
+              <span class="endpoint-path">/api/produk</span>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="sidebar-section"
+          style="border-bottom: none; padding-bottom: 0.5rem"
+        >
+          <div
+            class="sidebar-title"
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <span>History</span>
+            <button
+              class="btn-secondary"
+              style="font-size: 0.65rem; padding: 2px 6px"
+              onclick="clearHistory()"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+        <ul id="historyList" class="history-list">
+          <!-- Dynamically injected -->
+        </ul>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Request Bar -->
+        <div class="request-bar">
+          <select
+            id="methodSelect"
+            class="select-method"
+            onchange="handleMethodChange()"
+          >
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+
+          <input
+            id="urlInput"
+            class="input-url"
+            type="text"
+            value="/api/produk"
+            placeholder="Enter request URL or path..."
+          />
+
+          <button id="sendBtn" class="btn-send" onclick="sendRequest()">
+            <div id="btnSpinner" class="spinner"></div>
+            <span>Send</span>
+            <span class="kbd-shortcut">Ctrl+↵</span>
+          </button>
+        </div>
+
+        <!-- Split Request & Response Panels -->
+        <div class="panels-grid">
+          <!-- REQUEST PANEL -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="tabs-nav">
+                <button
+                  class="tab-btn active"
+                  onclick="switchTab('req', 'body')"
+                >
+                  Body (JSON)
+                </button>
+                <button class="tab-btn" onclick="switchTab('req', 'headers')">
+                  Headers
+                </button>
+                <button class="tab-btn" onclick="switchTab('req', 'params')">
+                  Params
+                </button>
+              </div>
+              <span style="font-size: 0.72rem; color: var(--text-dim)"
+                >Request Settings</span
+              >
+            </div>
+
+            <div class="panel-body">
+              <!-- Tab Body (JSON) -->
+              <div id="req-tab-body" class="tab-pane active">
+                <textarea
+                  id="bodyTextarea"
+                  class="code-editor"
+                  placeholder="// Write JSON payload here..."
+                ></textarea>
+                <div class="editor-toolbar">
+                  <div style="display: flex; gap: 0.5rem">
+                    <button class="btn-secondary" onclick="formatRequestBody()">
+                      Format JSON
+                    </button>
+                    <button
+                      class="btn-secondary"
+                      onclick="insertProdukTemplate()"
+                    >
+                      Insert Produk JSON
+                    </button>
+                  </div>
+                  <span id="jsonStatus" style="color: var(--text-dim)"
+                    >Valid JSON</span
+                  >
+                </div>
+              </div>
+
+              <!-- Tab Headers -->
+              <div id="req-tab-headers" class="tab-pane">
+                <table class="kv-table">
+                  <thead>
+                    <tr>
+                      <th>Key</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input
+                          class="kv-input"
+                          type="text"
+                          value="Content-Type"
+                          readonly
+                        />
+                      </td>
+                      <td>
+                        <input
+                          id="headerContentType"
+                          class="kv-input"
+                          type="text"
+                          value="application/json"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          class="kv-input"
+                          type="text"
+                          value="Accept"
+                          readonly
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="kv-input"
+                          type="text"
+                          value="application/json, text/plain, */*"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div
+                  style="
+                    padding: 0.75rem 1rem;
+                    color: var(--text-dim);
+                    font-size: 0.75rem;
+                  "
+                >
+                  Tip: Standard JSON headers are sent automatically.
+                </div>
+              </div>
+
+              <!-- Tab Params -->
+              <div id="req-tab-params" class="tab-pane">
+                <div
+                  style="
+                    padding: 1rem;
+                    color: var(--text-muted);
+                    font-size: 0.8rem;
+                  "
+                >
+                  <p>
+                    Query parameters can also be appended directly to the URL
+                    bar above.
+                  </p>
+                  <code
+                    style="
+                      display: block;
+                      margin-top: 0.5rem;
+                      background: var(--bg-subtle);
+                      padding: 0.5rem;
+                      border-radius: 4px;
+                      font-size: 0.75rem;
+                    "
+                  >
+                    Example: /api/produk?search=mouse&sort=asc
+                  </code>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RESPONSE PANEL -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="tabs-nav">
+                <button
+                  class="tab-btn active"
+                  onclick="switchTab('res', 'pretty')"
+                >
+                  Pretty
+                </button>
+                <button class="tab-btn" onclick="switchTab('res', 'raw')">
+                  Raw
+                </button>
+                <button class="tab-btn" onclick="switchTab('res', 'headers')">
+                  Headers
+                </button>
+              </div>
+
+              <div
+                id="responseMeta"
+                class="response-meta"
+                style="display: none"
+              >
+                <span id="statusPill" class="status-pill status-2xx"
+                  >200 OK</span
+                >
+                <div class="meta-item">
+                  <span>Time:</span>
+                  <span id="responseTime" class="meta-val">0 ms</span>
+                </div>
+                <div class="meta-item">
+                  <span>Size:</span>
+                  <span id="responseSize" class="meta-val">0 B</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <!-- Tab Pretty -->
+              <div id="res-tab-pretty" class="tab-pane active">
+                <div id="responseEmpty" class="empty-state">
+                  <svg
+                    class="empty-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    />
+                  </svg>
+                  <div class="empty-title">Ready to Send Request</div>
+                  <div class="empty-desc">
+                    Click "Send" or pick an endpoint from the left sidebar to
+                    inspect live API output.
+                  </div>
+                </div>
+
+                <div
+                  id="responsePrettyWrapper"
+                  style="display: none; height: 100%; flex-direction: column"
+                >
+                  <pre id="responsePrettyOutput" class="response-output"></pre>
+                  <div class="editor-toolbar">
+                    <span id="responseSummary" style="color: var(--text-dim)"
+                      >JSON Output</span
+                    >
+                    <button class="btn-secondary" onclick="copyResponse()">
+                      Copy Response
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab Raw -->
+              <div id="res-tab-raw" class="tab-pane">
+                <pre id="responseRawOutput" class="response-output"></pre>
+              </div>
+
+              <!-- Tab Response Headers -->
+              <div id="res-tab-headers" class="tab-pane">
+                <pre id="responseHeadersOutput" class="response-output"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+      // Elements
+      const baseUrlInput = document.getElementById("baseUrlInput");
+      const methodSelect = document.getElementById("methodSelect");
+      const urlInput = document.getElementById("urlInput");
+      const bodyTextarea = document.getElementById("bodyTextarea");
+      const sendBtn = document.getElementById("sendBtn");
+      const btnSpinner = document.getElementById("btnSpinner");
+      const responseMeta = document.getElementById("responseMeta");
+      const statusPill = document.getElementById("statusPill");
+      const responseTime = document.getElementById("responseTime");
+      const responseSize = document.getElementById("responseSize");
+      const responseEmpty = document.getElementById("responseEmpty");
+      const responsePrettyWrapper = document.getElementById(
+        "responsePrettyWrapper",
+      );
+      const responsePrettyOutput = document.getElementById(
+        "responsePrettyOutput",
+      );
+      const responseRawOutput = document.getElementById("responseRawOutput");
+      const responseHeadersOutput = document.getElementById(
+        "responseHeadersOutput",
+      );
+      const historyList = document.getElementById("historyList");
+
+      let currentResponseData = "";
+
+      // Initialize Auto-Detect Host
+      if (window.location.origin && window.location.origin.startsWith("http")) {
+        baseUrlInput.value = window.location.origin;
+      }
+
+      // Presets for ProdukController
+      const presets = {
+        ping: {
+          method: "GET",
+          url: "/api/produk",
+          body: "",
+        },
+        get_by_id: {
+          method: "GET",
+          url: "/api/produk/1",
+          body: "",
+        },
+        get_not_found: {
+          method: "GET",
+          url: "/api/produk/99",
+          body: "",
+        },
+        create: {
+          method: "POST",
+          url: "/api/produk",
+          body: JSON.stringify(
+            {
+              id: 2,
+              nama: "Keyboard Mechanical RGB",
+              harga: 450000,
+              deskripsi: "Switch Blue, tactile feedback mantap",
+            },
+            null,
+            2,
+          ),
+        },
+      };
+
+      function loadPreset(key) {
+        const p = presets[key];
+        if (!p) return;
+        methodSelect.value = p.method;
+        urlInput.value = p.url;
+        bodyTextarea.value = p.body;
+        handleMethodChange();
+
+        // update active state in sidebar
+        document
+          .querySelectorAll(".endpoint-item")
+          .forEach((el) => el.classList.remove("active"));
+        event.currentTarget.classList.add("active");
+
+        if (p.method === "POST") {
+          switchTab("req", "body");
+        }
+      }
+
+      function insertProdukTemplate() {
+        bodyTextarea.value = JSON.stringify(
+          {
+            id: Math.floor(Math.random() * 100) + 1,
+            nama: "Headset Wireless Pro",
+            harga: 750000,
+            deskripsi: "Noise cancelling, battery 40 hours",
+          },
+          null,
+          2,
+        );
+        validateJSON();
+      }
+
+      function formatRequestBody() {
+        try {
+          if (!bodyTextarea.value.trim()) return;
+          const parsed = JSON.parse(bodyTextarea.value);
+          bodyTextarea.value = JSON.stringify(parsed, null, 2);
+          validateJSON();
+        } catch (e) {
+          alert("Invalid JSON format: " + e.message);
+        }
+      }
+
+      function validateJSON() {
+        const status = document.getElementById("jsonStatus");
+        const val = bodyTextarea.value.trim();
+        if (!val) {
+          status.textContent = "Empty Body";
+          status.style.color = "var(--text-dim)";
+          return;
+        }
+        try {
+          JSON.parse(val);
+          status.textContent = "Valid JSON";
+          status.style.color = "#10b981";
+        } catch (err) {
+          status.textContent = "Invalid JSON";
+          status.style.color = "#ef4444";
+        }
+      }
+
+      bodyTextarea.addEventListener("input", validateJSON);
+
+      function handleMethodChange() {
+        const m = methodSelect.value;
+        if (m === "GET") {
+          methodSelect.style.color = "#10b981";
+        } else if (m === "POST") {
+          methodSelect.style.color = "#3b82f6";
+        } else if (m === "PUT") {
+          methodSelect.style.color = "#f59e0b";
+        } else if (m === "DELETE") {
+          methodSelect.style.color = "#ef4444";
+        }
+      }
+      handleMethodChange();
+
+      // Tab Switching
+      function switchTab(group, tabName) {
+        const isReq = group === "req";
+        const prefix = isReq ? "req" : "res";
+        const panel = isReq
+          ? document.querySelectorAll(".panels-grid .panel-card")[0]
+          : document.querySelectorAll(".panels-grid .panel-card")[1];
+
+        panel
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        panel
+          .querySelectorAll(".tab-pane")
+          .forEach((pane) => pane.classList.remove("active"));
+
+        if (
+          event &&
+          event.target &&
+          event.target.classList.contains("tab-btn")
+        ) {
+          event.target.classList.add("active");
+        } else {
+          // Fallback finder
+          const buttons = panel.querySelectorAll(".tab-btn");
+          if (tabName === "body" || tabName === "pretty")
+            buttons[0]?.classList.add("active");
+          if (tabName === "headers" || tabName === "raw")
+            buttons[1]?.classList.add("active");
+          if (tabName === "params") buttons[2]?.classList.add("active");
+        }
+
+        const targetPane = document.getElementById(`${prefix}-tab-${tabName}`);
+        if (targetPane) targetPane.classList.add("active");
+      }
+
+      // Send HTTP Request
+      async function sendRequest() {
+        const method = methodSelect.value;
+        let rawUrl = urlInput.value.trim();
+        const host = baseUrlInput.value.trim().replace(/\/+$/, "");
+
+        if (!rawUrl.startsWith("http://") && !rawUrl.startsWith("https://")) {
+          rawUrl = (rawUrl.startsWith("/") ? "" : "/") + rawUrl;
+          rawUrl = host + rawUrl;
+        }
+
+        // UI state
+        sendBtn.disabled = true;
+        btnSpinner.style.display = "block";
+        const startTime = performance.now();
+
+        try {
+          const options = {
+            method: method,
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json, text/plain, */*",
+            },
+          };
+
+          if (
+            ["POST", "PUT", "PATCH"].includes(method) &&
+            bodyTextarea.value.trim()
+          ) {
+            options.body = bodyTextarea.value.trim();
+          }
+
+          const res = await fetch(rawUrl, options);
+          const duration = Math.round(performance.now() - startTime);
+
+          // Status code badge
+          responseMeta.style.display = "flex";
+          statusPill.textContent = `${res.status} ${res.statusText || (res.status === 200 ? "OK" : "")}`;
+          statusPill.className = `status-pill ${res.ok ? "status-2xx" : "status-4xx"}`;
+          responseTime.textContent = `${duration} ms`;
+
+          // Headers
+          let headerStr = "";
+          res.headers.forEach((val, key) => {
+            headerStr += `${key}: ${val}\n`;
+          });
+          responseHeadersOutput.textContent =
+            headerStr || "No headers returned";
+
+          // Response text
+          const text = await res.text();
+          currentResponseData = text;
+          responseSize.textContent = `${new Blob([text]).size} B`;
+
+          // Switch out empty state
+          responseEmpty.style.display = "none";
+          responsePrettyWrapper.style.display = "flex";
+
+          responseRawOutput.textContent = text;
+
+          try {
+            const json = JSON.parse(text);
+            responsePrettyOutput.innerHTML = syntaxHighlight(
+              JSON.stringify(json, null, 2),
+            );
+          } catch {
+            responsePrettyOutput.textContent = text || "<Empty Response Body>";
+          }
+
+          // Add to history
+          addHistoryItem(method, urlInput.value.trim(), res.status);
+        } catch (err) {
+          const duration = Math.round(performance.now() - startTime);
+          responseMeta.style.display = "flex";
+          statusPill.textContent = "Error: Failed to fetch";
+          statusPill.className = "status-pill status-4xx";
+          responseTime.textContent = `${duration} ms`;
+          responseSize.textContent = "0 B";
+
+          responseEmpty.style.display = "none";
+          responsePrettyWrapper.style.display = "flex";
+          responsePrettyOutput.textContent = `Network / Connection Error:\n${err.message}\n\nMake sure your Spring Boot server is running on ${host}`;
+          responseRawOutput.textContent = err.stack || err.message;
+          responseHeadersOutput.textContent = "";
+        } finally {
+          sendBtn.disabled = false;
+          btnSpinner.style.display = "none";
+        }
+      }
+
+      // Syntax Highlight JSON
+      function syntaxHighlight(json) {
+        json = json
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            let cls = "json-number";
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = "json-key";
+              } else {
+                cls = "json-string";
+              }
+            } else if (/true|false/.test(match)) {
+              cls = "json-boolean";
+            } else if (/null/.test(match)) {
+              cls = "json-null";
+            }
+            return '<span class="' + cls + '">' + match + "</span>";
+          },
+        );
+      }
+
+      function copyResponse() {
+        if (!currentResponseData) return;
+        navigator.clipboard.writeText(currentResponseData).then(() => {
+          const btn = event.target;
+          const oldText = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(() => (btn.textContent = oldText), 1500);
+        });
+      }
+
+      // History Log
+      function addHistoryItem(method, url, status) {
+        const item = document.createElement("li");
+        item.className = "endpoint-item";
+        item.onclick = () => {
+          methodSelect.value = method;
+          urlInput.value = url;
+          handleMethodChange();
+        };
+
+        const mClass = "method-" + method.toLowerCase();
+        item.innerHTML = `
+        <span class="method-tag ${mClass}">${method}</span>
+        <span class="endpoint-path" style="flex:1;">${url}</span>
+        <span style="font-size:0.68rem; opacity:0.75;">${status}</span>
+      `;
+
+        historyList.insertBefore(item, historyList.firstChild);
+
+        if (historyList.children.length > 20) {
+          historyList.removeChild(historyList.lastChild);
+        }
+      }
+
+      function clearHistory() {
+        historyList.innerHTML = "";
+      }
+
+      // Keyboard Shortcut (Ctrl+Enter or Cmd+Enter to Send)
+      window.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          sendRequest();
+        }
+      });
+
+      // Dark / Light Theme Toggle
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      themeToggleBtn.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme");
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+      });
+    </script>
+  </body>
+</html>
