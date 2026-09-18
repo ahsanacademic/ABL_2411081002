@@ -1,51 +1,64 @@
 package com.asan.produk.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import com.asan.produk.entity.Produk;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@RestController 
-@RequestMapping("api/produk")
+import com.asan.produk.entity.JenisProduk;
+import com.asan.produk.entity.Produk;
+import com.asan.produk.service.JenisProdukService;
+import com.asan.produk.service.ProdukService;
+
+@RestController
+@RequestMapping("/api/produk")
 public class ProdukController {
 
-    // Simpan data produk secara dinamis di memory
-    private final List<Produk> produkList = new ArrayList<>(List.of(
-        new Produk(1, "Mouse", 100000, "Mouse gaming"),
-        new Produk(2, "Keyboard", 150000, "Keyboard mechanical"),
-        new Produk(3, "Monitor", 2000000, "Monitor gaming"),
-        new Produk(4, "Headphone", 500000, "Headphone gaming"),
-        new Produk(5, "Speaker", 250000, "Speaker gaming")
-    ));
+  @Autowired
+  private ProdukService produkService;
 
-    // 1. GET ALL: Menampilkan semua produk secara dinamis
-    @GetMapping
-    public List<Produk> getAllProduk() {
-        return produkList;
-    }
+  @Autowired
+  private JenisProdukService jenisProdukService;
 
-    // 2. GET BY ID: Mencari produk berdasarkan ID secara dinamis
-    @GetMapping("/{id}")
-    public ResponseEntity<Produk> getProdukById(@PathVariable("id") int id) {
-        return produkList.stream()
-            .filter(p -> p.getId() == id)
-            .findFirst()
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+  @GetMapping
+  public List<Produk> getAllProduk(@RequestParam(value = "idjenis", required = false) Long idjenis) {
+    if (idjenis != null) {
+      return produkService.getAllBarangByIdJenis(idjenis);
     }
+    return produkService.getAllProduk();
+  }
 
-    // 3. POST: Menambahkan produk baru ke dalam list secara dinamis
-    @PostMapping 
-    public ResponseEntity<Produk> createProduk(@RequestBody Produk produk) {
-        produkList.add(produk);
-        return ResponseEntity.ok(produk);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<Produk> getProdukById(@PathVariable("id") Long id) {
+    return ResponseEntity.ok(produkService.getProdukById(id));
+  }
+
+  @PostMapping
+  public ResponseEntity<Produk> createProduk(@RequestBody Produk produk) {
+    return ResponseEntity.ok(produkService.saveProduk(produk));
+  }
+
+  // jenis produk
+
+  @GetMapping("/jenis")
+  public List<JenisProduk> getAllJenisProduk() {
+    return jenisProdukService.getAllJenisProduk();
+  }
+
+  @GetMapping("/jenis/{id}")
+  public ResponseEntity<JenisProduk> getJenisProdukById(@PathVariable("id") Long id) {
+    return ResponseEntity.ok(jenisProdukService.getJenisProdukById(id));
+  }
+
+  @PostMapping("/jenis")
+  public ResponseEntity<JenisProduk> createJenisProduk(@RequestBody JenisProduk jenisProduk) {
+    return ResponseEntity.ok(jenisProdukService.saveJenisProduk(jenisProduk));
+  }
 }
