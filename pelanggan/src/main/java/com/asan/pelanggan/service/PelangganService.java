@@ -21,4 +21,12 @@ public class PelangganService {
   public Pelanggan savePelanggan(Pelanggan pelanggan) {
     return pelangganRepository.save(pelanggan);
   }
+
+  public Pelanggan getPelangganById(Long id) {
+    return pelangganRepository.findById(id).orElse(null);
+  }
+
+  public void deletePelanggan(Long id) {
+    pelangganRepository.deleteById(id);
+  }
 }
